@@ -49,6 +49,8 @@ const repo_path = getRepoPath()
 const backup_dir = repo_path ? repo_path : path.join(__dirname, 'backup') // if no repo_path use local path
 // })();
 
+const weekday = new Date().toLocaleString('en-us', {  weekday: 'long' })
+const weekly = (weekday == "Sunday")
 
 function getRepoPath() {
     const ubuntuPath = path.join('/', 'home', 'runner', 'work')
@@ -118,6 +120,14 @@ async function init() {
             await roam_open_graph(page, graph_name)
 
             for (const f of backup_types) {
+		// $$$ kludge to get this weekly backups in. ideally resolve this brefore calling init()
+		if (f.type == "EDN" || f.type == "JSON") {
+		        if (!weekly && f.backup) {
+		            console.log("not weekly. skipping", f.type)
+		            continue
+		        }
+		}
+
                 if (f.backup) {
                     const download_dir = path.join(tmp_dir, graph_name, f.type.toLowerCase())
                     await page._client.send('Page.setDownloadBehavior', { behavior: 'allow', downloadPath: download_dir })
