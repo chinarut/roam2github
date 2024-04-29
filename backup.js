@@ -50,7 +50,7 @@ const backup_dir = repo_path ? repo_path : path.join(__dirname, 'backup') // if 
 // })();
 
 const weekday = new Date().toLocaleString('en-us', {  weekday: 'long' })
-const weekly = (weekday == "Sunday")
+const weekly = (weekday == "Saturday")
 
 function getRepoPath() {
     const ubuntuPath = path.join('/', 'home', 'runner', 'work')
@@ -120,10 +120,10 @@ async function init() {
             await roam_open_graph(page, graph_name)
 
             for (const f of backup_types) {
-		// $$$ kludge to get this weekly backups in. ideally resolve this brefore calling init()
+		// $$$ kludge to backup EDN/JSON weekly. ideally resolve this before calling init()
 		if (f.type == "EDN" || f.type == "JSON") {
 		        if (!weekly && f.backup) {
-		            console.log("not weekly. skipping", f.type)
+		            log("not weekly. skipping", f.type)
 		            continue
 		        }
 		}
